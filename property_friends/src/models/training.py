@@ -6,10 +6,16 @@ models for property valuation tasks.
 
 import pandas as pd
 import joblib
+import numpy as np
 from pathlib import Path
-from typing import Union
+from typing import Union, Tuple
 from category_encoders import TargetEncoder
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import (
+    mean_squared_error,
+    mean_absolute_percentage_error,
+    mean_absolute_error,
+)
 
 
 def get_fitted_preprocessor(
@@ -111,3 +117,22 @@ def load_preprocessor(path: Union[str, Path]) -> TargetEncoder:
         The loaded TargetEncoder preprocessor.
     """
     return joblib.load(path)
+
+
+def get_metrics(
+    predictions: Union[np.ndarray, list], target: Union[np.ndarray, list]
+) -> Tuple[float, float, float]:
+    """Calculates regression metrics for model evaluation.
+
+    Args:
+        predictions: Model predictions array or list.
+        target: True target values array or list.
+
+    Returns:
+        Tuple containing (RMSE, MAPE, MAE) metrics.
+    """
+    rmse = np.sqrt(mean_squared_error(predictions, target))
+    mape = mean_absolute_percentage_error(predictions, target)
+    mae = mean_absolute_error(predictions, target)
+
+    return rmse, mape, mae

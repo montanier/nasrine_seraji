@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 from category_encoders import TargetEncoder
 from sklearn.ensemble import GradientBoostingRegressor
-from property_friends.models.prediction import (
+from property_friends.models.training import (
     get_fitted_preprocessor,
     get_transformed_dataset,
     get_trained_model,
@@ -13,6 +13,7 @@ from property_friends.models.prediction import (
     load_model,
     serialize_preprocessor,
     load_preprocessor,
+    get_metrics,
 )
 
 
@@ -216,3 +217,31 @@ def test_serialize_and_load_preprocessor() -> None:
         original_transform = encoder.transform(categorical_features)
         loaded_transform = loaded_encoder.transform(categorical_features)
         pd.testing.assert_frame_equal(original_transform, loaded_transform)
+
+
+def test_get_metrics_basic() -> None:
+    # Given
+    predictions = [10.0, 20.0, 30.0, 40.0]
+    target = [12.0, 18.0, 32.0, 38.0]
+
+    # When
+    rmse, mape, mae = get_metrics(predictions, target)
+
+    # Then
+    # Expected calculations:
+    # Errors: [-2, 2, -2, 2]
+    # MSE: (4 + 4 + 4 + 4) / 4 = 4
+    # RMSE: sqrt(4) = 2.0
+    assert rmse == 2.0
+
+    # MAE: (2 + 2 + 2 + 2) / 4 = 2.0
+    assert mae == 2.0
+
+    # MAPE: (2/12 + 2/18 + 2/32 + 2/38) / 4
+    expected_mape = (2 / 12 + 2 / 18 + 2 / 32 + 2 / 38) / 4
+    assert abs(mape - expected_mape) < 1e-10
+
+    # Check types
+    assert isinstance(rmse, float)
+    assert isinstance(mape, float)
+    assert isinstance(mae, float)
