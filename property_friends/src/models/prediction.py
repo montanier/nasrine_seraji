@@ -34,4 +34,4 @@ def predict_from_files(
     transformed_data = preprocessor.transform(dataset)
     predictions = model.predict(transformed_data)
 
-    return predictions
+    return np.asarray(predictions)
