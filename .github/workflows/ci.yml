@@ -22,7 +22,7 @@ jobs:
           --entrypoint="" \
           -v ${{ github.workspace }}:/app \
           property-friends \
-          bash -c "uv sync --extra dev && uv run black --check ."
+          bash -c "cd property_friends && uv sync --extra dev && uv run black --check ."
     
     - name: Run mypy type checking
       run: |
@@ -30,7 +30,7 @@ jobs:
           --entrypoint="" \
           -v ${{ github.workspace }}:/app \
           property-friends \
-          bash -c "uv sync --extra dev && uv run mypy . --ignore-missing-imports"
+          bash -c "cd property_friends && uv sync --extra dev && uv run mypy . --ignore-missing-imports"
 
   test:
     runs-on: ubuntu-latest
@@ -48,4 +48,4 @@ jobs:
           --entrypoint="" \
           -v ${{ github.workspace }}:/app \
           property-friends \
-          bash -c "uv sync --extra dev && uv run pytest tests -v"
+          bash -c "cd property_friends && uv sync --extra dev && uv run pytest tests -v"

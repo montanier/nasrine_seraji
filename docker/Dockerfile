@@ -8,13 +8,13 @@ WORKDIR /app
 
 # Two layers approach so that code can be modified wihout having to rebuild everything
 
-# Copy dependency files first and install dependencies only (skip project build since README.md not copied yet)
-COPY pyproject.toml uv.lock ./
+# Copy API dependency files first and install dependencies
+COPY api/pyproject.toml api/uv.lock ./
 RUN uv sync --frozen --no-cache --no-install-project
 
-# Copy all source code (including README.md required by pyproject.toml) and install the project
+# Copy all source code and install projects
 COPY . .
 RUN uv sync --frozen --no-cache
 
 # Set entrypoint
-ENTRYPOINT ["uv", "run", "api/main.py"]
+ENTRYPOINT ["uv", "run", "main.py"]

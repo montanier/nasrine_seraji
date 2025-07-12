@@ -26,7 +26,7 @@ future work:
 
 How to:
 - pre-commit : pip install --user pipx ;  pipx ensurepath ; pipx install pre-commit ; pre-commit install ; pre-commit run --all-files
-- run tests locally:  docker compose -f docker/docker-compose.dev.yml run --rm property_friends; uv sync --extra dev ;  uv run pytest tests
+- run tests locally:  docker compose -f docker/docker-compose.dev.yml run --rm property_friends; cd property_friends ; uv sync --extra dev ;  uv run pytest tests
 
 
 Log:
