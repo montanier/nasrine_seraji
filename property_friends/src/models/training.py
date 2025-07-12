@@ -5,6 +5,9 @@ models for property valuation tasks.
 """
 
 import pandas as pd
+import joblib
+from pathlib import Path
+from typing import Union
 from category_encoders import TargetEncoder
 from sklearn.ensemble import GradientBoostingRegressor
 
@@ -64,3 +67,47 @@ def get_trained_model(
     )
     model.fit(train_cols, target.values.ravel())
     return model
+
+
+def serialize_model(model: GradientBoostingRegressor, path: Union[str, Path]) -> None:
+    """Serializes a trained model to a file.
+
+    Args:
+        model: The fitted GradientBoostingRegressor to serialize.
+        path: File path where the model should be saved.
+    """
+    joblib.dump(model, path)
+
+
+def load_model(path: Union[str, Path]) -> GradientBoostingRegressor:
+    """Loads a serialized model from a file.
+
+    Args:
+        path: File path where the model is stored.
+
+    Returns:
+        The loaded GradientBoostingRegressor model.
+    """
+    return joblib.load(path)
+
+
+def serialize_preprocessor(encoder: TargetEncoder, path: Union[str, Path]) -> None:
+    """Serializes a fitted preprocessor to a file.
+
+    Args:
+        encoder: The fitted TargetEncoder to serialize.
+        path: File path where the preprocessor should be saved.
+    """
+    joblib.dump(encoder, path)
+
+
+def load_preprocessor(path: Union[str, Path]) -> TargetEncoder:
+    """Loads a serialized preprocessor from a file.
+
+    Args:
+        path: File path where the preprocessor is stored.
+
+    Returns:
+        The loaded TargetEncoder preprocessor.
+    """
+    return joblib.load(path)

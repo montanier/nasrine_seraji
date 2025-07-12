@@ -1,12 +1,18 @@
 import pytest
 import pandas as pd
 import numpy as np
+import tempfile
+from pathlib import Path
 from category_encoders import TargetEncoder
 from sklearn.ensemble import GradientBoostingRegressor
-from property_friends.models.model import (
+from property_friends.models.prediction import (
     get_fitted_preprocessor,
     get_transformed_dataset,
     get_trained_model,
+    serialize_model,
+    load_model,
+    serialize_preprocessor,
+    load_preprocessor,
 )
 
 
@@ -157,3 +163,56 @@ def test_get_trained_model_can_predict() -> None:
     assert len(predictions) == 2
     assert all(isinstance(pred, (int, float, np.number)) for pred in predictions)
     assert all(pred > 0 for pred in predictions)  # Prices should be positive
+
+
+def test_serialize_and_load_model() -> None:
+    # Given
+    train_cols = pd.DataFrame(
+        {"feature1": [1, 2, 3, 4, 5], "feature2": [10, 20, 30, 40, 50]}
+    )
+    target = pd.DataFrame({"price": [100, 200, 300, 400, 500]})
+    model = get_trained_model(train_cols, target)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        model_path = Path(temp_dir) / "test_model.joblib"
+
+        # When
+        serialize_model(model, model_path)
+        loaded_model = load_model(model_path)
+
+        # Then
+        assert isinstance(loaded_model, GradientBoostingRegressor)
+        assert loaded_model.learning_rate == model.learning_rate
+        assert loaded_model.n_estimators == model.n_estimators
+
+        # Verify predictions are the same
+        original_pred = model.predict(train_cols)
+        loaded_pred = loaded_model.predict(train_cols)
+        np.testing.assert_array_almost_equal(original_pred, loaded_pred)
+
+
+def test_serialize_and_load_preprocessor() -> None:
+    # Given
+    categorical_features = pd.DataFrame(
+        {
+            "type": ["casa", "departamento", "casa"],
+            "sector": ["providencia", "nunoa", "providencia"],
+        }
+    )
+    target = pd.DataFrame({"price": [100000, 80000, 110000]})
+    encoder = get_fitted_preprocessor(categorical_features, target)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        encoder_path = Path(temp_dir) / "test_encoder.joblib"
+
+        # When
+        serialize_preprocessor(encoder, encoder_path)
+        loaded_encoder = load_preprocessor(encoder_path)
+
+        # Then
+        assert isinstance(loaded_encoder, TargetEncoder)
+
+        # Verify transformations are the same
+        original_transform = encoder.transform(categorical_features)
+        loaded_transform = loaded_encoder.transform(categorical_features)
+        pd.testing.assert_frame_equal(original_transform, loaded_transform)
