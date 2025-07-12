@@ -15,3 +15,10 @@ repos:
           - fastapi
           - pydantic
         args: [--ignore-missing-imports]
+
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        files: ^property_friends/src/
+        args: [--convention=google]

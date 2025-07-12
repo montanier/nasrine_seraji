@@ -2,9 +2,11 @@ import pytest
 import pandas as pd
 import numpy as np
 from category_encoders import TargetEncoder
+from sklearn.ensemble import GradientBoostingRegressor
 from property_friends.models.model import (
     get_fitted_preprocessor,
     get_transformed_dataset,
+    get_trained_model,
 )
 
 
@@ -119,3 +121,39 @@ def test_get_transformed_dataset_with_unknown_columns() -> None:
     # When / Then
     with pytest.raises(KeyError):
         get_transformed_dataset(dataset, encoder)
+
+
+def test_get_trained_model_basic() -> None:
+    # Given
+    train_cols = pd.DataFrame(
+        {
+            "feature1": [1.0, 2.0, 3.0, 4.0, 5.0],
+            "feature2": [10.0, 20.0, 30.0, 40.0, 50.0],
+            "feature3": [0.1, 0.2, 0.3, 0.4, 0.5],
+        }
+    )
+    target = pd.DataFrame({"price": [100000, 150000, 200000, 250000, 300000]})
+
+    # When
+    model = get_trained_model(train_cols, target)
+
+    # Then
+    assert isinstance(model, GradientBoostingRegressor)
+
+
+def test_get_trained_model_can_predict() -> None:
+    # Given
+    train_cols = pd.DataFrame(
+        {"size": [100, 150, 200, 120, 180], "rooms": [2, 3, 4, 2, 3]}
+    )
+    target = pd.DataFrame({"price": [200000, 300000, 400000, 220000, 350000]})
+    test_data = pd.DataFrame({"size": [130, 170], "rooms": [2, 3]})
+
+    # When
+    model = get_trained_model(train_cols, target)
+    predictions = model.predict(test_data)
+
+    # Then
+    assert len(predictions) == 2
+    assert all(isinstance(pred, (int, float, np.number)) for pred in predictions)
+    assert all(pred > 0 for pred in predictions)  # Prices should be positive
