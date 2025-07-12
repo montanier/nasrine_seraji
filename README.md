@@ -1,6 +1,13 @@
 # nasrine_seraji
 Montanier's project for Bain
 
+Assuptions:
+- api and training run in two seprated service. Do no expect an api call to get the training. The client gets 
+some inference from the model. The datascience team manages the training of the model with update on the code
+or new data coming in
+- For now model weights are shared through filesystem. In real it would be on the cloud (blob storage with 
+versioning etc...)
+
 Approach:
 - Docker to run everything in it
 - main payload is in property_friends:
