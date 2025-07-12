@@ -6,15 +6,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 # Set working directory
 WORKDIR /app
 
-# Two layers approach so that code can be modified wihout having to rebuild everything
+# Two layers approach so that code can be modified without having to rebuild everything
 
-# Copy API dependency files first and install dependencies
-COPY api/pyproject.toml api/uv.lock ./
+# Copy property_friends dependency files first and install dependencies only
+COPY property_friends/pyproject.toml property_friends/uv.lock ./
 RUN uv sync --frozen --no-cache --no-install-project
 
-# Copy all source code and install projects
-COPY . .
+# Copy property_friends source code and install the project
+COPY property_friends/ .
 RUN uv sync --frozen --no-cache
 
-# Set entrypoint
-ENTRYPOINT ["uv", "run", "main.py"]
+# Set working directory to property_friends for commands
+WORKDIR /app
