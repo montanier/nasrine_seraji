@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import tempfile
 from pathlib import Path
-from property_friends.models.model import (
+from property_friends.models.training import (
     get_fitted_preprocessor,
     get_trained_model,
     serialize_model,

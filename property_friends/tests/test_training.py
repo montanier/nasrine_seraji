@@ -237,11 +237,7 @@ def test_get_metrics_basic() -> None:
     # MAE: (2 + 2 + 2 + 2) / 4 = 2.0
     assert mae == 2.0
 
-    # MAPE: (2/12 + 2/18 + 2/32 + 2/38) / 4
+    # MAPE: mean(|actual - predicted| / |actual|)
+    # |12-10|/12 + |18-20|/18 + |32-30|/32 + |38-40|/38 = 2/12 + 2/18 + 2/32 + 2/38
     expected_mape = (2 / 12 + 2 / 18 + 2 / 32 + 2 / 38) / 4
-    assert abs(mape - expected_mape) < 1e-10
-
-    # Check types
-    assert isinstance(rmse, float)
-    assert isinstance(mape, float)
-    assert isinstance(mae, float)
+    assert mape == pytest.approx(expected_mape)

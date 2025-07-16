@@ -8,14 +8,15 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from typing import Union
-from .model import load_model, load_preprocessor
+from numpy.typing import NDArray
+from .training import load_model, load_preprocessor
 
 
 def predict_from_files(
     preprocessor_path: Union[str, Path],
     model_path: Union[str, Path],
     dataset: pd.DataFrame,
-) -> np.ndarray:
+) -> NDArray[np.float64]:
     """Makes predictions using serialized preprocessor and model.
 
     Args:
@@ -34,4 +35,4 @@ def predict_from_files(
     transformed_data = preprocessor.transform(dataset)
     predictions = model.predict(transformed_data)
 
-    return np.asarray(predictions)
+    return np.asarray(predictions, dtype=np.float64)

@@ -33,3 +33,4 @@ Log:
 0h45m : explo notebook, basic tech choices
 2h15m : Base of project: docker, payload project, test, CI
 3h05m : Preprocessor, format and lint
+4h00m : property_friends package implemented, mypy, refacto

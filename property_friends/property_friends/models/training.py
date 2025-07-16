@@ -131,8 +131,8 @@ def get_metrics(
     Returns:
         Tuple containing (RMSE, MAPE, MAE) metrics.
     """
-    rmse = np.sqrt(mean_squared_error(predictions, target))
-    mape = mean_absolute_percentage_error(predictions, target)
-    mae = mean_absolute_error(predictions, target)
+    rmse = np.sqrt(mean_squared_error(target, predictions))
+    mape = mean_absolute_percentage_error(target, predictions)
+    mae = mean_absolute_error(target, predictions)
 
     return rmse, mape, mae
