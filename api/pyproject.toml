@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "property-friends-api"
+version = "0.1.0"
+description = "Property Friends API service"
+authors = [{name = "Jean-Marc Montanier", email = "montanier.jeanmarc@gmail.com"}]
+license = {text = "Proprietary"}
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.20.0",
+    "property-friends",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=22.0",
+    "flake8>=4.0",
+    "mypy>=0.900",
+]
+
+[tool.uv.sources]
+property-friends = { path = "../property_friends/dist/property_friends-0.1.0-py3-none-any.whl" }
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
