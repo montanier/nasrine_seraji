@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from ..schemas.request import PredictionRequest
 from ..schemas.response import PredictionResponse
 from ..middleware.auth import verify_api_key
-import property_friends
+from property_friends.models.prediction import predict_from_files
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 

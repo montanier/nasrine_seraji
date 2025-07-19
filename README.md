@@ -27,10 +27,6 @@ Coder experience:
 friendly for vscode, but it works nicely with my nvim setup. In real scenario i would pay a lot more attention
 to make it friendly for everyone.
 
-future work:
-- publish the docker image to a container registry so that tests are faster.
-- switch to a paid plan on github to have branch protection etc...
-- proper versioning of the model, e.g. mlwflow or wab
 
 How to:
 - pre-commit : pip install --user pipx ;  pipx ensurepath ; pipx install pre-commit ; pre-commit install ; pre-commit run --all-files
@@ -70,3 +66,10 @@ Log:
 4h00m : property_friends package implemented, mypy, refacto
 4h15m : fix CI follow up refacto
 4h45m : local train with script (ugly but needed for time constraint)
+
+future work:
+- publish the docker image to a container registry so that tests are faster.
+- publish the `property_friends` python package: cleaner version handling and code
+- switch to a paid plan on github to have branch protection etc...
+- system test for the api. Check that the API is answering correctly for basic queries.
+- proper versioning of the model, e.g. mlwflow or wab
