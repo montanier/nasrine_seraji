@@ -27,7 +27,9 @@ from property_friends.data_input.filesystem import load_data
     help="Output path for serialized model",
     type=click.Path(path_type=Path),
 )
-def train(train_dataset_path, test_dataset_path, serialized_dir):
+def train(
+    train_dataset_path: str, test_dataset_path: str, serialized_dir: Path
+) -> None:
     """Train and serialize a property price prediction model."""
     click.echo("Starting training with:")
     click.echo(f"  Train dataset: {train_dataset_path}")
