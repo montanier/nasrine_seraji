@@ -64,14 +64,13 @@ def get_trained_model(
     """
     model = GradientBoostingRegressor(
         **{
-            "learning_rate": 0.1,
-            "n_estimators": 500,
-            "max_depth": 6,
-            "subsample": 0.8,
-            "loss": "huber",
+            "learning_rate": 0.01,
+            "n_estimators": 300,
+            "max_depth": 5,
+            "loss": "absolute_error",
         }
     )
-    model.fit(train_cols, target.values.ravel())
+    model.fit(train_cols, target)
     return model
 
 
