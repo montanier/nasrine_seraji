@@ -30,10 +30,12 @@ to make it friendly for everyone.
 future work:
 - publish the docker image to a container registry so that tests are faster.
 - switch to a paid plan on github to have branch protection etc...
+- proper versioning of the model, e.g. mlwflow or wab
 
 How to:
 - pre-commit : pip install --user pipx ;  pipx ensurepath ; pipx install pre-commit ; pre-commit install ; pre-commit run --all-files
-- run tests locally:  docker compose -f docker/docker-compose.dev.yml run --rm property_friends; cd property_friends ; uv sync --extra dev ;  uv run pytest tests
+- run tests locally:  docker compose -f docker/docker-compose.dev.yml run --rm  --build property_friends; cd property_friends ;  uv run pytest tests
+- Train locally with script: docker compose -f docker/docker-compose.dev.yml run --rm --build property_friends; cd property_friends ; uv run scripts/train_and_serialize_model.py
 
 
 Log:
@@ -41,3 +43,4 @@ Log:
 2h15m : Base of project: docker, payload project, test, CI
 3h05m : Preprocessor, format and lint
 4h00m : property_friends package implemented, mypy, refacto
+4h45m : local train with script (ugly but needed for time constraint)
