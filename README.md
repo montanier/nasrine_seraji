@@ -1,6 +1,7 @@
 # nasrine_seraji
 
-This project is part of the Bain's recruitment process. This project transforms a Jupyter notebook-based property valuation model into a scalable, containerized service. 
+This project is part of the Bain's recruitment process. This project is a transform ation of a Jupyter
+notebook-based property valuation model into a scalable, containerized service. 
 The end result should be a production-ready machine learning API for predicting Chilean property prices. 
 
 ## Installation and Quick Start
@@ -26,7 +27,7 @@ The end result should be a production-ready machine learning API for predicting 
 
 3. **Start the API service**:
    ```bash
-   docker compose -f docker/docker-compose.api.yml up --build
+   docker compose -f docker/docker-compose.yml up --build property-friends-api
    ```
 
 4. **Test the API**:
@@ -77,6 +78,11 @@ The project is structured into two main components:
 - **Request/Response Models**: Pydantic schemas for data validation
 - **Docker Integration**: Containerized deployment with health checks
 
+
+### Training pipeline(`training_pipeline`)
+- **Dagster**:
+- **Role**: Orchestrate the calls to the core ml package.
+
 ## Technology Stack
 
 - **Docker**: Ensures consistent deployment across environments and simplifies dependency management. Containerization provides isolation and reproducibility.
@@ -109,7 +115,13 @@ The project is structured into two main components:
 
 ### Model Training
 
-3. **Train model locally**:
+3. **Train model locally with the pipeline**:
+   ```bash
+   docker compose -f docker/docker-compose.yml up --build
+   # Go to localhost:3000 and materialize the assets
+   ```
+
+3. **Train model locally with a script (deprecated)**:
    ```bash
    docker compose -f docker/docker-compose.dev.yml run --rm --build property_friends
    cd property_friends && uv run scripts/train_and_serialize_model.py
@@ -164,11 +176,12 @@ To release a new version of the property_friends package:
 ## Development Log
 
 For transparency and my own learning curiosity, I kept a rough log of development work. It's interesting to track how long tasks actually take versus initial estimates:
-0h45m : explo notebook, basic tech choices
-2h15m : Base of project: docker, payload project, test, CI
-3h05m : Preprocessor, format and lint
-4h00m : property_friends package implemented, mypy, refacto
-4h15m : fix CI follow up refacto
-4h45m : local train with script (ugly but needed for time constraint), work in parallel on API
-5h20m : API done and connected to main payload
-5h40m : Rewrite README
+- 0h45m : explo notebook, basic tech choices
+- 2h15m : Base of project: docker, payload project, test, CI
+- 3h05m : Preprocessor, format and lint
+- 4h00m : property_friends package implemented, mypy, refacto
+- 4h15m : fix CI follow up refacto
+- 4h45m : local train with script (ugly but needed for time constraint), work in parallel on API
+- 5h20m : API done and connected to main payload
+- 5h40m : Rewrite README
+- 6h00m : Refacto data loading
