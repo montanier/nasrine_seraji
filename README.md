@@ -79,9 +79,11 @@ The project is structured into two main components:
 - **Docker Integration**: Containerized deployment with health checks
 
 
-### Training pipeline(`training_pipeline`)
-- **Dagster**:
-- **Role**: Orchestrate the calls to the core ml package.
+### Training Pipeline (`training_pipeline/`)
+- **Dagster**: Production-ready pipeline manager that demonstrates enterprise-grade ML orchestration capabilities while being fully functional for real production use
+- **Asset-Based Architecture**: Each training step (data loading, preprocessing, model training, evaluation, serialization) is defined as a Dagster asset with clear dependencies
+- **Web Interface**: Visual pipeline monitoring and execution through Dagster's web UI at `localhost:3000`
+- **Role**: Orchestrates calls to the core ML package with proper dependency management and observability
 
 ## Technology Stack
 
@@ -90,6 +92,7 @@ The project is structured into two main components:
 - **FastAPI**: Modern, fast web framework with automatic API documentation and built-in data validation. Excellent performance and developer experience with async support.
 - **Pydantic**: Robust data validation using Python type annotations. Ensures request/response data integrity and provides clear error messages.
 - **pytest**: Comprehensive testing framework with fixtures and powerful assertion capabilities. Essential for maintaining code quality in production systems.
+- **Dagster**: Modern data orchestration platform with asset-based architecture and rich web UI. Provides reliable pipeline execution, dependency tracking, and observability for ML workflows.
 
 
 ## Development Guide
@@ -118,7 +121,7 @@ The project is structured into two main components:
 3. **Train model locally with the pipeline**:
    ```bash
    docker compose -f docker/docker-compose.yml up --build
-   # Go to localhost:3000 and materialize the assets
+   # Go to localhost:3000, "assets", select all assests, materialize the assets
    ```
 
 3. **Train model locally with a script (deprecated)**:
@@ -165,6 +168,7 @@ To release a new version of the property_friends package:
 - **Repository Management**: Implement branch protection rules and advanced GitHub workflows
 
 ### Model Operations (MLOps)
+- **Enhanced Dagster Integration**: Leverage Dagster's asset versioning and materialization system to automatically version models and serve them directly to the API, eliminating redundant filesystem serialization
 - **Model Versioning**: Integrate with MLflow or Weights & Biases for proper model lifecycle management
 - **Monitoring**: Add model performance monitoring and data drift detection
 - **System Testing**: Implement end-to-end API tests with realistic property data scenarios
@@ -185,3 +189,4 @@ For transparency and my own learning curiosity, I kept a rough log of developmen
 - 5h20m : API done and connected to main payload
 - 5h40m : Rewrite README
 - 6h00m : Refacto data loading
+- 7h30m : Pipeline training with Dagster
