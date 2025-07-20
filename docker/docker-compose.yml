@@ -9,6 +9,7 @@ services:
       - "3000:3000"
     volumes:
       - ../training_pipeline:/app/training_pipeline
+      - ../data:/data
 
   property-friends-api:
     build:
