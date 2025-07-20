@@ -5,7 +5,7 @@ import click
 from pathlib import Path
 
 from property_friends.models import CATEGORICAL_COLS, TARGET, training, prediction
-from property_friends.data_input.filesystem import load_data
+from property_friends.data_input.factory import create_data_loader
 
 
 @click.command()
@@ -37,7 +37,10 @@ def train(
     click.echo(f"  Output dir: {serialized_dir}")
 
     click.echo("Load data")
-    train_df, test_df = load_data(train_dataset_path, test_dataset_path)
+    data_loader = create_data_loader(
+        "filesystem", train_path=train_dataset_path, test_path=test_dataset_path
+    )
+    train_df, test_df = data_loader.load_data()
     train_columns = list(train_df.columns)
     train_columns.remove(TARGET)
     train_inputs = train_df[train_columns]
