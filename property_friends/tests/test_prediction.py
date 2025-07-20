@@ -13,23 +13,34 @@ from property_friends.models.prediction import predict_from_files
 
 def test_predict_from_files_basic() -> None:
     # Given
-    # Create and train preprocessor
-    categorical_features = pd.DataFrame(
+    # Create training data with all features
+    training_data = pd.DataFrame(
         {
             "type": ["casa", "departamento", "casa", "departamento"],
             "sector": ["providencia", "nunoa", "providencia", "nunoa"],
+            "size": [100, 80, 120, 90],  # Add numerical features
+            "price": [200000, 150000, 220000, 160000],
         }
     )
-    target = pd.DataFrame({"price": [200000, 150000, 220000, 160000]})
+
+    categorical_features = training_data[["type", "sector"]]
+    target = training_data[["price"]]
     preprocessor = get_fitted_preprocessor(categorical_features, target)
 
-    # Create and train model
-    transformed_features = preprocessor.transform(categorical_features)
-    model = get_trained_model(transformed_features, target)
+    # Create and train model with full feature set
+    full_features = training_data.drop("price", axis=1)
+    full_features.loc[:, ["type", "sector"]] = preprocessor.transform(
+        categorical_features
+    ).values
+    model = get_trained_model(full_features, target)
 
-    # Test dataset
+    # Test dataset (should match training feature structure minus target)
     test_data = pd.DataFrame(
-        {"type": ["casa", "departamento"], "sector": ["providencia", "nunoa"]}
+        {
+            "type": ["casa", "departamento"],
+            "sector": ["providencia", "nunoa"],
+            "size": [110, 85],
+        }
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -51,21 +62,30 @@ def test_predict_from_files_basic() -> None:
 
 def test_predict_from_files_consistency() -> None:
     # Given
-    categorical_features = pd.DataFrame(
+    training_data = pd.DataFrame(
         {
             "type": ["casa", "departamento", "oficina"],
             "sector": ["providencia", "nunoa", "las_condes"],
+            "size": [150, 100, 200],
+            "price": [300000, 200000, 500000],
         }
     )
-    target = pd.DataFrame({"price": [300000, 200000, 500000]})
 
-    # Train preprocessor and model
+    categorical_features = training_data[["type", "sector"]]
+    target = training_data[["price"]]
     preprocessor = get_fitted_preprocessor(categorical_features, target)
-    transformed_features = preprocessor.transform(categorical_features)
-    model = get_trained_model(transformed_features, target)
+
+    # Train model with full feature set
+    full_features = training_data.drop("price", axis=1)
+    full_features.loc[:, ["type", "sector"]] = preprocessor.transform(
+        categorical_features
+    ).values
+    model = get_trained_model(full_features, target)
 
     # Test data
-    test_data = pd.DataFrame({"type": ["casa"], "sector": ["providencia"]})
+    test_data = pd.DataFrame(
+        {"type": ["casa"], "sector": ["providencia"], "size": [140]}
+    )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         preprocessor_path = Path(temp_dir) / "preprocessor.joblib"
@@ -84,20 +104,36 @@ def test_predict_from_files_consistency() -> None:
 
 def test_predict_from_files_matches_direct_prediction() -> None:
     # Given
-    categorical_features = pd.DataFrame(
-        {"type": ["casa", "departamento"], "sector": ["providencia", "nunoa"]}
+    training_data = pd.DataFrame(
+        {
+            "type": ["casa", "departamento"],
+            "sector": ["providencia", "nunoa"],
+            "size": [120, 90],
+            "price": [250000, 180000],
+        }
     )
-    target = pd.DataFrame({"price": [250000, 180000]})
 
-    # Train models
+    categorical_features = training_data[["type", "sector"]]
+    target = training_data[["price"]]
     preprocessor = get_fitted_preprocessor(categorical_features, target)
-    transformed_features = preprocessor.transform(categorical_features)
-    model = get_trained_model(transformed_features, target)
 
-    test_data = pd.DataFrame({"type": ["casa"], "sector": ["providencia"]})
+    # Train model with full feature set
+    full_features = training_data.drop("price", axis=1)
+    full_features.loc[:, ["type", "sector"]] = preprocessor.transform(
+        categorical_features
+    ).values
+    model = get_trained_model(full_features, target)
 
-    # Direct prediction
-    direct_prediction = model.predict(preprocessor.transform(test_data))
+    test_data = pd.DataFrame(
+        {"type": ["casa"], "sector": ["providencia"], "size": [115]}
+    )
+
+    # Direct prediction (transform categorical features only)
+    test_data_direct = test_data.copy()
+    test_data_direct.loc[:, ["type", "sector"]] = preprocessor.transform(
+        test_data[["type", "sector"]]
+    ).values
+    direct_prediction = model.predict(test_data_direct)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         preprocessor_path = Path(temp_dir) / "preprocessor.joblib"

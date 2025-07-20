@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy property_friends package and build it
+COPY property_friends/ ./property_friends/
+WORKDIR /app/property_friends
+RUN uv build
+
+# Copy API files
+WORKDIR /app
+COPY api/ ./api/
+
+# Install API dependencies (which includes the built property_friends wheel)
+WORKDIR /app/api
+RUN uv sync --frozen
+
+# Expose port
+EXPOSE 8000
+
+# Set the command to run the API
+CMD ["uv", "run", "uvicorn", "property_friends_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

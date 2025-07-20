@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Union
 from numpy.typing import NDArray
 from .training import load_model, load_preprocessor
+from property_friends.models import CATEGORICAL_COLS, TARGET
 
 
 def predict_from_files(
@@ -31,8 +32,14 @@ def predict_from_files(
     preprocessor = load_preprocessor(preprocessor_path)
     model = load_model(model_path)
 
-    # Transform features and make predictions
-    transformed_data = preprocessor.transform(dataset)
-    predictions = model.predict(transformed_data)
+    # Transform categorical features
+    input_columns = list(dataset.columns)
+    if TARGET in input_columns:
+        input_columns.remove(TARGET)
+    transformed_data = preprocessor.transform(dataset[CATEGORICAL_COLS])
+    dataset.loc[:, CATEGORICAL_COLS] = transformed_data.values
+
+    # Make predictions
+    predictions = model.predict(dataset)
 
     return np.asarray(predictions, dtype=np.float64)

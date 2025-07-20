@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "property-friends"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A property valuation predictor"
 authors = [{name = "Jean-Marc Montanier", email = "montanier.jeanmarc@gmail.com"}]
 license = {text = "Proprietary"}
@@ -40,6 +40,9 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["property_friends"]
+
+[tool.hatch.version]
+path = "property_friends/__init__.py"
 
 [tool.black]
 line-length = 88
