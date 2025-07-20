@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import pandas as pd
 from fastapi import APIRouter, Depends
 from ..schemas.request import PredictionRequest
 from ..schemas.response import PredictionResponse
@@ -11,4 +14,8 @@ router = APIRouter(prefix="/predictions", tags=["predictions"])
 async def predict_property_value(
     request: PredictionRequest, api_key: str = Depends(verify_api_key)
 ):
-    return {"predicted_value": 0.0, "confidence": 0.0}
+    model_path = Path("/data/models/model.joblib")
+    preprocessor_path = Path("/data/models/preprocessor.joblib")
+    dataset = pd.DataFrame([request.dict()])
+    predicted_value = predict_from_files(preprocessor_path, model_path, dataset)
+    return {"predicted_value": predicted_value[0]}

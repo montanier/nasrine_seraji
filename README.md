@@ -33,6 +33,25 @@ How to:
 - run tests locally:  docker compose -f docker/docker-compose.dev.yml run --rm  --build property_friends; cd property_friends ;  uv run pytest tests
 - Train locally with script: docker compose -f docker/docker-compose.dev.yml run --rm --build property_friends; cd property_friends ; uv run scripts/train_and_serialize_model.py
 - start API service: docker compose -f docker/docker-compose.api.yml up --build
+- Test the API service: start it, then go to localhost:8000/docs. The token is in `api/.env`
+   - run the curl command to call
+   ```
+   curl -X 'POST' \
+  'http://localhost:8000/predictions/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer your-secret-api-key-here' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "type": "departamento",
+  "sector": "vitacura",
+  "net_usable_area": 140.0,
+  "net_area": 170.0,
+  "n_rooms": 4,
+  "n_bathroom": 4,
+  "latitude": -33.40,
+  "longitude": -70.58
+  }'
+  ```
 
 ## Release Instructions
 
@@ -68,8 +87,10 @@ Log:
 4h45m : local train with script (ugly but needed for time constraint)
 
 future work:
+- deploy everything to the cloud to be internet facing
 - publish the docker image to a container registry so that tests are faster.
 - publish the `property_friends` python package: cleaner version handling and code
 - switch to a paid plan on github to have branch protection etc...
 - system test for the api. Check that the API is answering correctly for basic queries.
 - proper versioning of the model, e.g. mlwflow or wab
+- properly handle the token in cloud prod environment

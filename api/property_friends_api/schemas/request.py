@@ -1,11 +1,12 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class PredictionRequest(BaseModel):
-    property_type: str
-    location: str
-    size: float
-    bedrooms: int
-    bathrooms: int
-    age: Optional[int] = None
+    type: str
+    sector: str
+    net_usable_area: float
+    net_area: float
+    n_rooms: float
+    n_bathroom: float
+    latitude: float
+    longitude: float
