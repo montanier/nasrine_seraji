@@ -1,10 +1,28 @@
 version: '3.8'
 
 services:
-  property_friends:
+  pipeeline-training:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.pipe
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../training_pipeline:/app/training_pipeline
+      - ../data:/data
+
+  property-friends-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
     ports:
       - "8000:8000"
-    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ../data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
